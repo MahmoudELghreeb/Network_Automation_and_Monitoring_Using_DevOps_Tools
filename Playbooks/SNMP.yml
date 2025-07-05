@@ -1,0 +1,20 @@
+- name: Enable SNMP on devices
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Set SNMP community string
+      ios_config:
+        lines:
+          - snmp-server community public RO
+
+    - name: Set SNMP contact
+      ios_config:
+        lines:
+          - snmp-server contact Admin
+
+    - name: Set SNMP location
+      ios_config:
+        lines:
+          - snmp-server location GNS3-Lab
+          
+          

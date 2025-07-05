@@ -1,0 +1,15 @@
+---
+- name: Schedule Automatic Backups
+  hosts: routers,switches
+  gather_facts: no
+  tasks:
+    - name: Perform Backup
+      ios_command:
+        commands:
+          - show running-config
+      register: config_output
+
+    - name: Save Formatted Backup to Central Server
+      template: 
+        src: backup_template.j2 
+        dest: "~/Desktop/ansible/auto_backup/{{ inventory_hostname }}_backup_{{ lookup('pipe', \"date +'%Y-%m-%d_%H-%M-%S'\") }}.txt"

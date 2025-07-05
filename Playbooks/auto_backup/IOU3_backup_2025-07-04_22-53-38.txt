@@ -1,0 +1,215 @@
+#--- Device Configuration Backup ---
+#
+# Hostname: IOU3
+# Backup Date: 2025-07-04 22:53:40
+#
+#====================================================
+# Device Information
+#====================================================
+
+
+
+
+Hostname: IOU3
+IOS Version: 15.2
+Last Configuration Change: N/A
+
+#====================================================
+# Interface Summary
+#====================================================
+                                                                                                                                                                                                                                            interface Ethernet0/0
+                          interface Ethernet0/1
+                          interface Ethernet0/2
+                          interface Ethernet0/3
+                  interface Ethernet1/0
+                  interface Ethernet1/1
+                  interface Ethernet1/2
+                  interface Ethernet1/3
+                  interface Ethernet2/0
+                  interface Ethernet2/1
+                  interface Ethernet2/2
+                  interface Ethernet2/3
+                  interface Ethernet3/0
+                  interface Ethernet3/1
+                  interface Ethernet3/2
+                  interface Ethernet3/3
+                  interface Vlan1
+                      interface Vlan10
+                                                                                                                                                                                                          
+#====================================================
+# DHCP Pools
+#====================================================
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+#====================================================
+# Routing Information (RIP & Static Routes)
+#====================================================
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                No RIP configuration found.
+
+                                                                                                                                                                                                                            ip route 0.0.0.0 0.0.0.0 192.168.10.1
+            ip route 192.168.1.0 255.255.255.252 192.168.10.1
+            ip route 192.168.1.4 255.255.255.252 192.168.10.1
+            ip route 192.168.80.0 255.255.255.0 192.168.10.1
+            ip route 192.168.90.0 255.255.255.0 192.168.10.1
+            ip route 192.168.100.0 255.255.255.252 192.168.10.1
+            ip route 192.168.100.4 255.255.255.252 192.168.10.1
+            ip route 192.168.122.0 255.255.255.0 192.168.10.1
+            ip route 192.168.150.0 255.255.255.0 192.168.10.1
+            ip route 192.168.200.0 255.255.255.252 192.168.10.1
+            ip route 192.168.200.4 255.255.255.252 192.168.10.1
+                                                                  No Static Routes found.
+
+#====================================================
+# Full Running Configuration
+#====================================================
+Building configuration...
+
+Current configuration : 2537 bytes
+!
+! Last configuration change at 02:31:54 UTC Sat Jul 5 2025 by admin
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname IOU3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
+logging buffered 50000
+logging console discriminator EXCESS
+!
+username admin privilege 15 secret 5 $1$gB7R$gA9QAjWJg8veB7/S4F7vG0
+no aaa new-model
+!
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+no ip domain-lookup
+ip domain-name school.local
+no ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport access vlan 10
+ switchport mode access
+!
+interface Ethernet0/3
+!
+interface Ethernet1/0
+!
+interface Ethernet1/1
+!
+interface Ethernet1/2
+!
+interface Ethernet1/3
+!
+interface Ethernet2/0
+!
+interface Ethernet2/1
+!
+interface Ethernet2/2
+!
+interface Ethernet2/3
+!
+interface Ethernet3/0
+!
+interface Ethernet3/1
+!
+interface Ethernet3/2
+!
+interface Ethernet3/3
+!
+interface Vlan1
+ ip address 192.168.100.113 255.255.255.0
+!
+interface Vlan10
+ ip address 192.168.10.5 255.255.255.0
+!
+ip default-gateway 192.168.10.1
+ip forward-protocol nd
+!
+ip tcp synwait-time 5
+ip http server
+!
+ip route 0.0.0.0 0.0.0.0 192.168.10.1
+ip route 192.168.1.0 255.255.255.252 192.168.10.1
+ip route 192.168.1.4 255.255.255.252 192.168.10.1
+ip route 192.168.80.0 255.255.255.0 192.168.10.1
+ip route 192.168.90.0 255.255.255.0 192.168.10.1
+ip route 192.168.100.0 255.255.255.252 192.168.10.1
+ip route 192.168.100.4 255.255.255.252 192.168.10.1
+ip route 192.168.122.0 255.255.255.0 192.168.10.1
+ip route 192.168.150.0 255.255.255.0 192.168.10.1
+ip route 192.168.200.0 255.255.255.252 192.168.10.1
+ip route 192.168.200.4 255.255.255.252 192.168.10.1
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+!
+!
+snmp-server community public RO
+snmp-server location GNS3-Lab
+snmp-server contact Admin
+!
+control-plane
+!
+banner motd ^CWelcome to IOU3 - University Network^C
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh
+!
+!
+!
+end
+
+#====================================================
+# End of Backup
+#====================================================

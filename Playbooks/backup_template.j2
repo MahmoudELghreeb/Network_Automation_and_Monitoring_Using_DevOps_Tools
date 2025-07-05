@@ -1,0 +1,97 @@
+#--- Device Configuration Backup ---
+#
+# Hostname: {{ inventory_hostname }}
+# Backup Date: {{ lookup('pipe', "date +'%Y-%m-%d %H:%M:%S'") }}
+#
+#====================================================
+# Device Information
+#====================================================
+{% set config_lines = config_output.stdout[0].split('\n') %}
+
+{# Extract Hostname #}
+{% set hostname_line = config_lines | select('match', '^hostname\\s+') | list | first | default('hostname N/A') %}
+{% set hostname_display = hostname_line.split(' ')[1] if 'hostname' in hostname_line else 'Not Found' %}
+
+{# Extract IOS Version #}
+{% set version_line = config_lines | select('match', '^version\\s+') | list | first | default('version N/A') %}
+{% set version_display = version_line.split(' ')[1] if 'version' in version_line else 'Not Found' %}
+
+{# Extract Last Configuration Change #}
+{% set last_change_line = config_lines | select('match', 'Last configuration change at') | list | first | default('N/A') %}
+
+Hostname: {{ hostname_display }}
+IOS Version: {{ version_display }}
+Last Configuration Change: {{ last_change_line }}
+
+#====================================================
+# Interface Summary
+#====================================================
+{% set in_interface_block = false %}
+{% for line in config_lines %}
+  {% set stripped_line = line.strip() %}
+  {% if stripped_line.startswith('interface ') %}
+    {{ stripped_line }}
+    {% set in_interface_block = true %}
+  {% elif in_interface_block and (stripped_line.startswith('!') or stripped_line.startswith('interface ') or stripped_line.startswith('end')) %}
+    {% set in_interface_block = false %}
+  {% elif in_interface_block %}
+    {{ stripped_line }}
+  {% endif %}
+{% endfor %}
+
+#====================================================
+# DHCP Pools
+#====================================================
+{% set in_dhcp_block = false %}
+{% for line in config_lines %}
+  {% set stripped_line = line.strip() %}
+  {% if stripped_line.startswith('ip dhcp pool') %}
+    {{ stripped_line }}
+    {% set in_dhcp_block = true %}
+  {% elif in_dhcp_block and (stripped_line.startswith('!') or stripped_line.startswith('ip dhcp pool') or stripped_line.startswith('end')) %}
+    {% set in_dhcp_block = false %}
+  {% elif in_dhcp_block %}
+    {{ stripped_line }}
+  {% endif %}
+{% endfor %}
+
+#====================================================
+# Routing Information (RIP & Static Routes)
+#====================================================
+{% set in_rip_block = false %}
+{% set rip_found = false %}
+{% for line in config_lines %}
+  {% set stripped_line = line.strip() %}
+  {% if stripped_line.startswith('router rip') %}
+    {{ stripped_line }}
+    {% set in_rip_block = true %}
+    {% set rip_found = true %}
+  {% elif in_rip_block and (stripped_line.startswith('!') or stripped_line.startswith('router ') or stripped_line.startswith('end')) %}
+    {% set in_rip_block = false %}
+  {% elif in_rip_block %}
+    {{ stripped_line }}
+  {% endif %}
+{% endfor %}
+{% if not rip_found %}
+No RIP configuration found.
+{% endif %}
+
+{% set static_routes_found = false %}
+{% for line in config_lines %}
+  {% if line.strip().startswith('ip route') %}
+    {{ line.strip() }}
+    {% set static_routes_found = true %}
+  {% endif %}
+{% endfor %}
+{% if not static_routes_found %}
+No Static Routes found.
+{% endif %}
+
+#====================================================
+# Full Running Configuration
+#====================================================
+{{ config_output.stdout[0] }}
+
+#====================================================
+# End of Backup
+#====================================================

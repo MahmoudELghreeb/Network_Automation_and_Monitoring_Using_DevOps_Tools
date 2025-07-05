@@ -1,0 +1,87 @@
+---
+- name: Configure MLS switches
+  hosts: switches
+  gather_facts: no
+  vars:
+    vlan_list: [10,20,30,40,50,60,80,90]
+  tasks:
+    - name: Basic global config & SSH
+      ios_config:
+        lines:
+          - hostname {{ inventory_hostname }}
+          - ip domain-name example.com
+          - username admin privilege 15 secret mma
+          - crypto key generate rsa modulus 2048
+          - ip ssh version 2
+        save_when: always
+
+    - name: Enable SSH on VTY
+      ios_config:
+        lines:
+          - line vty 0 4
+          - login local
+          - transport input ssh
+
+    - name: Create VLANs
+      ios_vlan:
+        vlan_id: "{{ item }}"
+        name: "VLAN{{ item }}"
+      loop: "{{ vlan_list }}"
+
+    - name: Configure VLAN interfaces with VRRP
+      ios_config:
+        lines: |
+          {% for vlan in vlan_list %}
+          interface vlan {{ vlan }}
+            ip address 192.168.{{ vlan }}.{{ (2 if inventory_hostname.endswith('1') else 3) }} 255.255.255.0
+            no shutdown
+            vrrp 10 ip 192.168.{{ vlan }}.1
+          {% endfor %}
+        save_when: always
+
+    - name: Configure DHCP pools
+      ios_config:
+        lines:
+          - ip dhcp pool admin
+          - network 192.168.10.0 255.255.255.0
+          - default-router 192.168.10.1
+          - dns-server 192.168.10.1
+          - ip dhcp pool student
+          - network 192.168.20.0 255.255.255.0
+          - default-router 192.168.20.1
+          - dns-server 192.168.20.1
+          - ip dhcp pool it
+          - network 192.168.30.0 255.255.255.0
+          - default-router 192.168.30.1
+          - dns-server 192.168.30.1
+          - ip dhcp pool HR
+          - network 192.168.40.0 255.255.255.0
+          - default-router 192.168.40.1
+          - dns-server 192.168.40.1
+          - ip dhcp pool ENGINEER
+          - network 192.168.50.0 255.255.255.0
+          - default-router 192.168.50.1
+          - dns-server 192.168.50.1
+          - ip dhcp pool FINANCE
+          - network 192.168.60.0 255.255.255.0
+          - default-router 192.168.60.1
+          - dns-server 192.168.60.1
+          - ip dhcp pool staf
+          - network 192.168.80.0 255.255.255.0
+          - default-router 192.168.80.1
+          - dns-server 192.168.80.1
+          - ip dhcp pool student-lab
+          - network 192.168.90.0 255.255.255.0
+          - default-router 192.168.90.1
+          - dns-server 192.168.90.1
+        save_when: always
+
+    - name: Configure trunk ports to core
+      ios_config:
+        lines:
+          - interface range Ethernet0/1-2
+          - switchport trunk encapsulation dot1q
+          - switchport mode trunk
+          - no shutdown
+        save_when: always
+

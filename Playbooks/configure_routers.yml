@@ -1,0 +1,85 @@
+---
+- name: Configure routers R1, R2, R3
+  hosts: routers
+  gather_facts: no
+  tasks:
+    - name: Basic global config
+      ios_config:
+        lines:
+          - hostname {{ inventory_hostname }}
+          - ip domain-name example.com
+          - username admin privilege 15 secret mma
+          - crypto key generate rsa modulus 2048
+          - ip ssh version 2
+        save_when: always
+
+    - name: Enable SSH on VTY lines
+      ios_config:
+        lines:
+          - line vty 0 4
+          - login local
+          - transport input ssh
+
+    - name: Configure RIP version 2
+      ios_config:
+        lines:
+          - router rip
+          - version 2
+          - no auto-summary
+          - {% if inventory_hostname == 'R1' %}
+            - network 192.168.100.0
+            - network 192.168.1.4
+            {% endif %}
+          - {% if inventory_hostname == 'R2' %}
+            - network 192.168.1.0
+            - network 192.168.122.0
+            {% endif %}
+          - {% if inventory_hostname == 'R3' %}
+            - network 192.168.1.4
+            - network 192.168.200.0
+            {% endif %}
+        match: line
+        save_when: always
+
+    - name: Add default route
+      ios_static_route:
+        dest: 0.0.0.0
+        mask: 0.0.0.0
+        next_hop: "{{ '192.168.100.2' if inventory_hostname == 'R1' else
+                     '192.168.122.1' if inventory_hostname == 'R2' else
+                     '192.168.200.1' }}"
+
+    - name: Configure IPsec VPN tunnel
+      when: inventory_hostname in ['R1', 'R3']
+      ios_config:
+        lines:
+          - interface Tunnel1
+          - ip address {{ '10.10.10.1 255.255.255.0' if inventory_hostname == 'R1' else '10.10.10.2 255.255.255.0' }}
+          - tunnel source {{ 'FastEthernet2/0' if inventory_hostname == 'R1' else 'FastEthernet0/0' }}
+          - tunnel destination {{ '192.168.1.6' if inventory_hostname == 'R1' else '192.168.1.5' }}
+          - tunnel mode ipsec ipv4
+          - tunnel protection ipsec profile TUNSEC
+        save_when: always
+
+    - name: Configure crypto ISAKMP & IPsec
+      when: inventory_hostname in ['R1', 'R3']
+      ios_config:
+        lines:
+          - crypto isakmp policy 10
+          - authentication pre-share
+          - encryption aes 256
+          - hash sha256
+          - group 2
+          - lifetime 86400
+          - crypto isakmp key VPN_SECRET_KEY address {{ '192.168.1.6' if inventory_hostname == 'R1' else '192.168.1.5' }}
+          - crypto ipsec transform-set VPN_TRANSFORM_SET esp-aes 256 esp-sha256-hmac
+          - crypto ipsec profile TUNSEC
+          - set transform-set VPN_TRANSFORM_SET
+          - crypto map VPN_MAP 10 ipsec-isakmp
+          - set peer {{ '192.168.1.6' if inventory_hostname == 'R1' else '192.168.1.5' }}
+          - set transform-set VPN_TRANSFORM_SET
+          - match address 100
+          - interface {{ 'FastEthernet2/0' if inventory_hostname == 'R1' else 'FastEthernet0/0' }}
+          - crypto map VPN_MAP
+        save_when: always
+

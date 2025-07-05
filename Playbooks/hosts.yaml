@@ -1,0 +1,90 @@
+all:
+  vars:
+    ansible_connection: network_cli
+    ansible_user: admin
+    ansible_password: mma
+
+
+
+  children:
+    routers:
+      hosts:
+        R1:
+          ansible_host: 192.168.100.1
+          ansible_network_os: ios 
+          hostname: R1
+
+        R2:
+          ansible_host: 192.168.122.122
+          ansible_network_os: ios
+          hostname: R2
+
+        R3:
+          ansible_host: 192.168.1.6
+          ansible_network_os: ios
+          hostname: R3
+
+    switches:
+      hosts:
+        IOU1:
+          ansible_host: 192.168.100.2
+          ansible_network_os: ios
+          hostname: IOU1
+
+        IOU2:
+          ansible_host: 192.168.100.6
+          ansible_network_os: ios
+          hostname: IOU2
+        IOU3:
+          ansible_host: 192.168.10.5
+          ansible_network_os: ios
+          hostname: IOU3
+        IOU4:
+          ansible_host: 192.168.20.5
+          ansible_network_os: ios
+          hostname: IOU4
+        IOU5:
+          ansible_host: 192.168.30.5
+          ansible_network_os: ios
+          hostname: IOU5
+        IOU6:
+          ansible_host: 192.168.40.5
+          ansible_network_os: ios
+          hostname: IOU6
+        IOU8:
+          ansible_host: 192.168.50.5
+          ansible_network_os: ios
+          hostname: IOU8
+        IOU9:
+          ansible_host: 192.168.60.5
+          ansible_network_os: ios
+          hostname: IOU9
+        IOU10:
+          ansible_host: 192.168.200.2
+          ansible_network_os: ios
+          hostname: IOU10
+        IOU11:
+          ansible_host: 192.168.200.6
+          ansible_network_os: ios
+          hostname: IOU11
+        IOU12:
+          ansible_host: 192.168.80.5
+          ansible_network_os: ios
+          hostname: IOU12
+        IOU13:
+          ansible_host: 192.168.90.5
+          ansible_network_os: ios
+          hostname: IOU13
+    pcs:
+      hosts:
+        PC1:
+          ansible_host: 192.168.60.2
+        PC2:
+          ansible_host: 192.168.80.2
+
+    vms:
+      hosts:
+        MonitoringVM:
+          ansible_host: 192.168.122.10
+        SnortVM:
+          ansible_host: 192.168.150.10
