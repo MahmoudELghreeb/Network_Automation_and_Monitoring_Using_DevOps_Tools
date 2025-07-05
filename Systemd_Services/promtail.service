@@ -1,0 +1,15 @@
+[Unit]
+Description=Promtail Log Collector for Loki
+After=network.target
+
+[Service]
+Type=simple
+User=kali
+ExecStart=/home/kali/Desktop/promtail/promtail-linux-amd64 -config.file=/home/kali/Desktop/promtail/promtail-local-config.yaml
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+

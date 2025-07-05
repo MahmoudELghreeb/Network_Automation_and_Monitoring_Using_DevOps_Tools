@@ -1,0 +1,15 @@
+[Unit]
+Description=Loki Log Aggregation System
+After=network.target
+
+[Service]
+Type=simple
+User=kali 
+ExecStart=/home/kali/Desktop/loki1/loki-linux-amd64 -config.file=/home/kali/Desktop/loki1/loki-local-config.yaml
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,74 @@
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+           - 'localhost:9093'
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+   - "alert_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: 'snmp'
+    static_configs:
+      - targets:
+        - '192.168.122.122'
+        - '192.168.100.1'
+        - '192.168.1.6'
+        - '192.168.100.2'
+        - '192.168.100.6'
+        - '192.168.200.2'
+        - '192.168.200.6'
+        - '192.168.10.5'
+        - '192.168.20.5'
+        - '192.168.30.5'
+        - '192.168.40.5'
+        - '192.168.50.5'
+        - '192.168.60.5'
+        - '192.168.80.5'
+        - '192.168.90.5'
+    metrics_path: /snmp
+    params:
+      module: [if_mib]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 'localhost:9116'
+
+  - job_name: "node"
+    static_configs:
+      - targets:
+        - '192.168.150.10:9100'
+        - '192.168.122.10:9100'
+        - '192.168.60.3:9100'
+        - '192.168.80.2:9100'
+  - job_name: 'loki'
+    static_configs:
+      - targets:
+        - '192.168.150.10:3100'
+        - '192.168.60.3:3100'
+
+
+

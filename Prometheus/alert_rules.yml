@@ -1,0 +1,77 @@
+groups:
+  - name: node_alerts
+    rules:
+
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute."
+
+      - alert: HighCPUUsage
+        expr: rate(node_cpu_seconds_total{mode="user"}[1m]) > 0.7
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU Usage on {{ $labels.instance }}"
+          description: "CPU usage is above 70% for more than 2 minutes."
+
+
+      - alert: SSHAlert
+        expr: snort_alerts{msg="SSH alert"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SSH attack detected"
+          description: "An SSH alert was triggered by Snort for SSH attempts."
+
+      - alert: TelnetAlert
+        expr: snort_alerts{msg="Telnet alert"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Telnet attack detected"
+          description: "A Telnet alert was triggered by Snort for Telnet attempts."
+
+      - alert: WrongSSH
+        expr: snort_alerts{msg="Wrong SSH"} == 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Wrong SSH attempt detected"
+          description: "A failed SSH password attempt was detected."
+
+      - alert: DDOSAttackDetected
+        expr: snort_alerts{msg="DDoS SYN Flood Attack Detected"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DDoS SYN Flood Attack detected"
+          description: "A DDoS SYN flood attack was detected by Snort."
+
+      - alert: DDOSUDPFlood
+        expr: snort_alerts{msg="DDoS UDP Flood Attack Detected"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DDoS UDP Flood Attack detected"
+          description: "A DDoS UDP flood attack was detected by Snort."
+
+      - alert: DDOSICMPFlood
+        expr: snort_alerts{msg="DDoS ICMP Flood Attack Detected"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "DDoS ICMP Flood Attack detected"
+          description: "A DDoS ICMP flood attack was detected by Snort."
+

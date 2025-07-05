@@ -1,0 +1,11 @@
+[Unit]
+Description=Snort network intrusion detection system
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=sudo snort -c /etc/snort/snort.lua -R /etc/snort/rules/local.rules -l /var/log/snort -i eth1 -A alert_fast
+
+[Install]
+WantedBy=multi-user.target
+
