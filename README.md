@@ -19,16 +19,26 @@ This graduation project focuses on automating network configuration and monitori
 - 🛡️ **Snort** – Intrusion Detection System  
 
 ## 📸 Sample Results
-![Grafana Dashboard](./Screenshots/dashboard.png)
+![Project Architecture](./Results/Project_Architecture.png)
+![Network Design](./Results/Network_Design.png)
+![Prometheus Targets](./Results/Prometheus_Targets.png)
+![Prometheus Alerts](./Results/Prometheus_Alert_Rules.png)
+![NodeExporter Dashboard](./Results/Grafana_Node_Exporter_Dashboard.png)
+![SNMPExporter Dashboard](./Results/Grafana_SNMP_Exporter_Dashboard.png)
+![Loki Dashboard](./Results/Grafana_Loki(Snort_Logs)_Dashboard.png)
+![InstanceDown Detection](./Results/InstanceDown_Detection.png.png)
+
+
 
 ## 👥 Team Members
-- **Mahmoud Reda Elghreeb Mohamed** – Team Leader & Automation Engineer  
+- **Mahmoud Reda Elghreeb Mohamed** – Team Leader & Monitoring Engineer  
 - **Mahmoud Shaaban Mohamed** – Network Engineer  
 - **Abdelrahman Reda Mostafa** – Security Engineer  
 
 ## 🧑‍🏫 Supervisor
-Dr. [اسم الدكتور المشرف]
-
+Dr. Eman Mahmoud AbdElhalim
+Dr. Fatma Alzahra ALagery
+Dr. Asmaa Helmy 
 ---
 
-> 📚 **Graduation Project – Faculty of Engineering, Telecommunications Department – Class of 2025**
+> 📚 **Graduation Project – Faculty of Engineering, Electronics and Communications Department – Class of 2025**
